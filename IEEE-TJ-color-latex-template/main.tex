@@ -1,0 +1,347 @@
+\documentclass[journal,twoside,web]{ieeecolor}
+\usepackage{generic}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{algorithm,algorithmic}
+\usepackage{hyperref}
+\hypersetup{hidelinks=true}
+\usepackage{textcomp}
+\usepackage[utf8]{inputenc} % Kodowanie UTF-8
+\usepackage[T1]{fontenc}    % Poprawne kodowanie fontów
+\usepackage{polski}         % Wsparcie dla języka polskiego
+\usepackage[polish]{babel}  % Polskie reguły typograficzne
+\usepackage{float}
+\usepackage{setspace}
+
+
+% Zmiana etykiety Fig. na Rysunek
+\addto\captionspolish{\renewcommand{\figurename}{Rysunek}}
+
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+\markboth{\hskip25pc IEEE TRANSACTIONS AND JOURNALS TEMPLATE}
+{Author \MakeLowercase{\textit{et al.}}: Title}
+
+\begin{document}
+\title{Regulatory niecałkowitego rzędu w manipulatorach}
+
+\author{D. Ostaszewicz \IEEEmembership{}; M. Szarało \IEEEmembership{}}
+
+\maketitle
+\onehalfspacing
+
+\section{Streszczenie}
+W artykule przedstawiono zastosowanie rachunku różniczkowego niecałkowitego rzędu w projektowaniu układów sterowania manipulatorami o sześciu stopniach swobody. Omówiono teoretyczne podstawy tego podejścia oraz narzędzia wykorzystywane do modelowania i symulacji, takie jak MATLAB, Simulink, Simscape, FOMCON, Robotics Toolbox i ROS2. Szczególną uwagę poświęcono regulatorowi niecałkowitego rzędu. Wyniki badań wskazują na potencjał rachunku niecałkowitego rzędu w zaawansowanych zastosowaniach robotycznych.
+
+\section{Wstęp}
+\label{sec:introduction}
+\IEEEPARstart{R}{achunek} niecałkowitego rzędu, rozwijany na przestrzeni ostatnich dekad, zyskuje na znaczeniu w obszarze inżynierii sterowania. Dzięki swojej elastyczności i możliwości modelowania systemów z pamięcią, stanowi doskonałe narzędzie do opisu i projektowania układów o złożonej dynamice. W porównaniu z klasycznym rachunkiem różniczkowym, oferuje on możliwość dostosowania charakterystyki dynamicznej układów poprzez precyzyjną manipulację rzędami pochodnych i całek, co otwiera nowe kierunki w optymalizacji i analizie systemów sterowania. Podstawy rachunku i jego zastosowania w elektrotechnice, automatyce i teorii sterowania są szeroko opisane, przez specjalistów w dziedzinie \cite{Fractional, Selected, Pawlusz, Popolizio}.  
+
+Praktyczne zastosowania układów niecałkowitego rzędu obejmują szeroki wachlarz dziedzin, takich jak sterowanie procesami przemysłowymi, modelowanie dynamiczne w biologii czy inżynieria mechaniczna \cite{Kumar, plant, falling, power}. W kontekście układów sterowania, rozwiązania te pozwalają na zwiększenie dokładności regulacji, redukcję przeregulowań i poprawę tłumienia zakłóceń.
+
+Celem niniejszego artykułu jest analiza zastosowania rachunku niecałkowitego rzędu w projektowaniu układów sterowania manipulatora o sześciu stopniach swobody. W pracy przedstawiono metody oraz narzędzia użyte w procesie modelowania i symulacji. Szczególny nacisk położono na wykorzystanie oprogramowania MATLAB i Simulink, które umożliwiły przeprowadzenie symulacji oraz obliczeń numerycznych.
+
+Biblioteka Simscape, będąca częścią środowiska Simulink, zapewniła możliwość szybkiego i efektywnego tworzenia modeli elektrycznych, mechanicznych oraz mechatronicznych systemów wielodziedzinowych. Do modelowania i analizy układów niecałkowitego rzędu wykorzystano bibliotekę FOMCON, która oferuje zaawansowane narzędzia do projektowania i symulacji takich systemów.
+
+W kontekście robotyki zastosowano Robotics Toolbox, który umożliwił przeprowadzanie operacji na modelach manipulatora, w tym analizę kinematyki i dynamiki. Dodatkowo, wykorzystano system ROS2 (Robot Operating System 2), który pozwala na modułowe projektowanie i prototypowanie systemów robotycznych. Komunikację na odległość z systemem ROS2 zrealizowano za pomocą Hamachi, zapewniającego bezpieczne połączenie przez VPN.
+
+Integracja symulacji z ROS2 została osiągnięta dzięki ROS Toolbox, który umożliwił przesyłanie danych między Simulinkiem a ROS2, a także stworzenie zdalnej wizualizacji ruchu manipulatora. Przedstawione narzędzia i metody stanowią kompleksowe podejście do projektowania i analizy zaawansowanych układów sterowania manipulatorów, podkreślając zalety wykorzystania rachunku niecałkowitego rzędu. 
+\section{Metody}
+\subsection{Matlab i Simulink}
+MATLAB to zaawansowane środowisko obliczeniowe, które umożliwia przeprowadzanie analiz numerycznych, przetwarzanie danych, modelowanie matematyczne oraz wizualizację wyników. Jego wszechstronność i szeroka gama funkcji sprawiają, że jest wykorzystywany w wielu dziedzinach, takich jak inżynieria, nauki ścisłe czy finanse. MATLAB wspiera użytkownika poprzez gotowe biblioteki i narzędzia, które upraszczają implementację zaawansowanych algorytmów i umożliwiają szybkie prototypowanie rozwiązań. \href{https://www.mathworks.com/help/matlab/}{\cite{matlab}}
+
+Simulink to rozszerzenie MATLAB-a dedykowane modelowaniu, symulacji i analizie systemów dynamicznych. Dzięki graficznemu interfejsowi użytkownika umożliwia intuicyjne tworzenie modeli za pomocą bloków reprezentujących elementy systemu, co znacząco przyspiesza proces projektowania. Simulink jest szczególnie ceniony w automatyce, robotyce oraz przemyśle motoryzacyjnym, gdzie znajduje zastosowanie w projektowaniu i testowaniu systemów sterowania, przetwarzaniu sygnałów czy analizie systemów mechatronicznych. \href{https://www.mathworks.com/help/simulink/}{\cite{simulink}}
+
+\subsection{FOPID}
+Regulator FOPID (ang. Fractional-Order Proportional-Integral-Derivative) jest rozszerzeniem klasycznego regulatora PID, który wykorzystuje pojęcia rachunku różniczkowego i całkowego niecałkowitego rzędu. W przeciwieństwie do standardowego PID, gdzie działania różniczkowania i całkowania są określone jako operatory pierwszego i zerowego rzędu, w FOPID ich rzędy są dowolnymi liczbami rzeczywistymi, oznaczonymi jako $\lambda$ (rząd całkowania) oraz $\mu$ (rząd różniczkowania) \eqref{eq:FOPID}.
+\begin{equation}
+	G(s) = K_{p} + \frac{K_{i}}{s^{\lambda}} + K_{d}s^{\mu}
+	\label{eq:FOPID}
+\end{equation} 
+Przedstawiane badania wykorzystują bibliotekę FOMCON, opisaną w sekcji E. 
+\subsection{Robotics Toolbox}
+Robotics Toolbox to biblioteka dostępna dla MATLAB-a, zaprojektowana z myślą o analizie, symulacji i projektowaniu systemów robotycznych. Narzędzie to dostarcza zestawu funkcji i obiektów wspomagających modelowanie manipulatorów, pojazdów mobilnych oraz systemów autonomicznych, umożliwiając kompleksowe badania nad różnymi aspektami robotyki. Główne funkcjonalności Robotics Toolbox obejmują:
+
+\begin{itemize}
+	\item modelowanie manipulatorów – definiowanie struktur kinematycznych i dynamicznych przy użyciu reprezentacji Denavita-Hartenberga (DH) lub standardu URDF,
+	\item kinematykę – analiza kinematyki prostej i odwrotnej manipulatorów,
+	\item planowanie trajektorii – generowanie trajektorii ruchu manipulatorów i pojazdów mobilnych w przestrzeni operacyjnej,
+	\item symulację i wizualizację – możliwość symulowania ruchu robotów oraz wizualizacji 3D,
+	\item analizę dynamiki – symulacja sił i momentów działających w systemach robotycznych.
+\end{itemize}
+Robotics Toolbox wspiera badania nad algorytmami sterowania, umożliwia testowanie nowych metod planowania ruchu oraz integrację z innymi narzędziami, takimi jak Simulink czy ROS. Dzięki swoim wszechstronnym możliwościom, jest szczególnie ceniony w projektach badawczo-rozwojowych i edukacji z zakresu automatyki i robotyki. \href{https://www.mathworks.com/help/robotics/}{\cite{Robotics Toolbox}}
+\subsection{Simscape}
+Simscape to narzędzie rozszerzające możliwości MATLAB-a i Simulinka, które umożliwia modelowanie, symulację oraz analizę systemów fizycznych w sposób intuicyjny, za pomocą komponentów graficznych. Jest szczególnie przydatne w dziedzinach, gdzie systemy mają złożoną strukturę wielodomenową, łączącą elementy mechaniczne, elektryczne, hydrauliczne czy termiczne \href{https://www.mathworks.com/help/robotics/}{\cite{Simscape}}. Główne cechy Simscape:
+\begin{itemize}
+	\item modelowanie wielodomenowe – możliwość integracji elementów z różnych dziedzin fizyki w jednym środowisku symulacyjnym,
+	\item komponenty gotowe do użycia – bogata biblioteka bloków reprezentujących elementy, takie jak rezystory, silniki, zawory czy tłoki,
+	\item podejście opierające się na fizyce – modele bazują na rzeczywistych równaniach opisujących zjawiska fizyczne, co ułatwia dokładne odwzorowanie systemów,
+	\item symulacja dynamiczna – możliwość analizowania zachowań systemów w czasie, z uwzględnieniem nieliniowości i sprzężeń między domenami.
+\end{itemize}
+\subsection{FOMCON}
+FOMCON jest biblioteką Matlaba i Simulinka, która wprowadza do środowisk możliwość dodania numerycznej implementacji układów regulacji bazujących na funkcjach niecałkowitego rzędu. Biblioteka bazuje na definicji dyskretnej Grünwald'a–Letnikov'a \eqref{eq:GL}.
+
+\begin{equation}
+	\Delta ^{\alpha}x_{k} = \sum_{j=0}^{k}(-1)^{j}\left( 
+	\begin{matrix}
+		\alpha \\
+		j
+	\end{matrix}\right) x_{k-j}
+	\label{eq:GL}
+\end{equation}
+
+Do odtwarzania wyników ciągu dyskretnego - w bibliotece - wykorzystywana jest aproksymacja Oustaloupa, która jest budowana na podstawie transmitancji operatorowej rachunku, w zdefiniowanym zakresie częstotliwości i ograniczeniu pamięci próbek \textit{N} \eqref{eq:Oustaloup}.
+\begin{equation}
+	s^{\alpha} = G_{\omega} \prod_{k=-N}^{N}\frac{s + \omega_{k}'}{s + \omega_{k}}
+	\label{eq:Oustaloup}
+\end{equation}
+Szczegóły transformacji i aproksymacji są dokładniej opisane przez autorów biblioteki \cite{FOMCON,FOMCONdoc}. Gotowy blok regulatora; Fig \ref{fig:fopid}; niecałkowitego rzędu może zostać wstawiony bezpośrednio do wcześniej przygotowanych modeli.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.7\linewidth]{../figs/FOPID}
+	\caption{Blok regulatora FOPID}
+	\label{fig:fopid}
+\end{figure}
+
+Wewnątrz bloku można określić parametry tj.:
+
+\begin{itemize}
+	\item wzmocnienie proporcjonalne $K_{p}$,
+	\item wzmocnienie całkowania $K_{i}$,
+	\item rząd całkowania $\lambda$,
+	\item wzmocnienie różniczkowania $K_{d}$,
+	\item rząd różniczkowania $\mu$,
+	\item zakres częstotliwości aproksymacji,
+	\item rząd aproksymacji. 
+\end{itemize}
+\subsection{ROS2}
+Robot Operating System 2 (ROS2) to otwarte środowisko programistyczne zaprojektowane do tworzenia aplikacji dla systemów robotycznych. Stanowi rozwinięcie pierwotnej wersji ROS, wprowadzając znaczące ulepszenia w zakresie wydajności, skalowalności oraz bezpieczeństwa. ROS2 umożliwia projektowanie systemów modularnych, które mogą działać na wielu platformach, takich jak Linux, Windows czy macOS, a także na urządzeniach wbudowanych. Dzięki wsparciu dla komunikacji typu publish-subscribe, ROS2 pozwala na efektywną wymianę danych pomiędzy komponentami systemu robotycznego \href{https://docs.ros.org/en/foxy/index.html}{\cite{ROS2}}. 
+
+Wizualizacja manipulatora została stworzona w aplikacji RVIZ systemu ROS2. 
+\subsection{Hamachi}
+
+Hamachi to narzędzie do tworzenia wirtualnych sieci prywatnych (VPN), które umożliwia bezpieczne połączenie komputerów przez internet, tak jakby znajdowały się one w tej samej lokalnej sieci. Jest to rozwiązanie typu peer-to-peer, często używane do zdalnej gry, pracy zespołowej i w sytuacjach, gdy tradycyjne rozwiązania VPN są zbyt skomplikowane lub kosztowne. Połączenia w Hamachi są szyfrowane, co zapewnia bezpieczeństwo przesyłanych danych. Umożliwia to dostęp do zasobów w sieci lokalnej, nawet jeśli komputery znajdują się w różnych miejscach na świecie. Hamachi działa bez potrzeby ręcznej konfiguracji routerów, co upraszcza połączenie w środowiskach, w których nie ma pełnej kontroli nad ustawieniami sieciowymi. Może być używane do współpracy na plikach i aplikacjach działających w sieci lokalnej, a także do dostępu do urządzeń, takich jak drukarki czy kamery sieciowe. Umożliwia także zdalny dostęp do zasobów firmowych lub domowych. Hamachi działa na systemach Windows, macOS i Linux, a jego wersja podstawowa jest bezpłatna, z ograniczeniem liczby użytkowników w wirtualnej sieci. Dla większej liczby połączeń dostępna jest wersja płatna. W artykule sieć VPN została wykorzystana do przesyłania pozycji stawów i wizualizacji procesu, symulacji manipulatora w RVIZ dostępnym wraz z systemem ROS2. W systemie opartym na Linux, tj. Ubuntu Desktop Hamachi nie posiada GUI. Żeby zaimplementować interfejs graficzny należy pobrać Haguichi (GUI Hamachi w Ubuntu) \href{https://haguichi.net/download/}{\cite{Haguichi}}.
+Proces instalacji dla systemu Ubuntu, Linux Mint i innych systemów pochodnych:
+
+\begin{footnotesize}
+\begin{verbatim}
+	sudo add-apt-repository -y ppa:ztefn/haguichi-stable
+	sudo apt update
+	sudo apt install -y haguichi
+\end{verbatim}
+\end{footnotesize}
+\subsection{ROS Toolbox}
+
+ROS Toolbox \href{https://www.mathworks.com/help/ros/}{\cite{ROS Toolbox}} to narzędzie dostępne w MATLAB, które umożliwia integrację z systemami opartymi na Robot Operating System (ROS) oraz ROS 2. Ułatwia projektowanie, symulację i analizę algorytmów dla systemów robotycznych, a także pozwala na komunikację z rzeczywistymi robotami. Toolbox oferuje funkcje takie jak wysyłanie i odbieranie wiadomości ROS, subskrypcję tematów, wywoływanie usług i akcji, a także generowanie niestandardowych typów wiadomości. Umożliwia również symulację i wizualizację za pomocą narzędzi takich jak Gazebo czy Rviz oraz integrację z Simulink. Blok Publishera umożliwia wysyłanie danych środowiska Simulink; w tym wypadku przez VPN; do systemu ROS2; Rysunek \ref{fig:pub}.
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.7\linewidth]{../figs/pub}
+	\caption{Blok publikujący na temacie}
+	\label{fig:pub}
+\end{figure}
+Blok odbierający dane z tematu; Rysunek \ref{fig:sub}; odbiera dane, które zwraca system ROS2 (nasłuchuje danych na określonym temacie).
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\linewidth]{../figs/sub}
+	\caption{Subskrybent w Simulinku}
+	\label{fig:sub}
+\end{figure}
+
+\subsection{Model Manipulatora}
+Modele 3D elementów manipulatora zostały opracowane w programie Fusion 360. Następnie zostały zaimportowane do środowiska Simulink, gdzie przeprowadzono ich odpowiednie rozmieszczenie, uwzględniając także właściwości inercyjne oraz parametry materiałowe poszczególnych elementów robota. W rezultacie tych działań uzyskano implementację modelu matematycznego manipulatora, gotowego do dalszej analizy i symulacji. 
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\linewidth]{../figs/joints}
+	\caption{Model 3D manipulatora}
+	\label{fig:joints}
+\end{figure}
+Robot posiada 6 stawów typu revolute, co implikuje ruch o sześciu stopniach swobody. Układ sterowania; Fig \ref{fig:ster} został zbudowany w oparciu o technikę kaskadowych układów regulacji. Nadrzędną pętlę stanowi układ regulacji położenia kątowego. Wyjściem regulatora położenia jest zadana prędkość kątowa, która reaguje w pętli podrzędnej z regulatorem prędkości kątowej. Dla każdego stawu układ regulacji został skopiowany sześciokrotnie. Podczas tworzenia modelu nie zostały uwzględnione modele układów napędowych, ponieważ wtedy poziom skomplikowania i czas budowy modelu zdecydowanie by się wydłużył. Dynamika samych napędów nie ma wpływu na przeprowadzane badanie.
+\begin{figure*}[hbt!]
+	\centering
+	\includegraphics[width=1\linewidth]{../figs/ster}
+	\caption{Układ sterowania położeniem kątowym stawów manipulatora}
+	\label{fig:ster}
+\end{figure*}
+ 
+\subsection{Proces strojenia regulatorów}
+
+Ręczne strojenie większego, nieliniowego modelu z początku może wydawać się skomplikowane jednak w tym rozdziale zostaną zestawione; empiryczne spostrzeżenia związane z całym procesem. Na początku trzeba ustawić wartości wzmocnień tak, aby regulatory utrzymywały się samoistnie w początkowym położeniu równowagi lub mechanicznie zablokować położenie wszystkich stawów. Strojenie rozpoczyna się od stawu końcowego, ponieważ układ regulacji położenia efektora jest najmniej zależny od dynamiki pozostałych członów robota. Proces ręcznego doboru nastaw powinien się rozpocząć od pętli wewnętrznych (prędkości kątowych). Na wyjściu układ zapewnia moment, który powinien przezwyciężyć opory ruchu i aperiodycznie doprowadzić do osiągnięcia zadanego położenia. Nadrzędne układy regulacji muszą zawierać regulatory PID, ponieważ z tego co zostało zauważone podczas strojenia, jeśli dynamika członu zależy również od innego, niezależnego członu, żeby przeciwdziałać szybkim zmianom i ewentualnym drganiom robota, potrzebny jest człon różniczkujący, który zapewni dużą reakcję na szybkie zmiany położenia układu. Po procesie strojenia można przejść do wykonania właściwych badań. Nastrojone układy regulacji całkowitego rzędu stanowią część porównawczą badań. 
+\section{Wyniki}
+W bieżącym rozdziale szczegółowo omówiono wyniki badań dotyczących wpływu zastosowania regulatorów niecałkowitego rzędu w podrzędnej pętli regulacji prędkości kątowej stawów. Celem tych badań było porównanie efektywności regulatorów niecałkowitego rzędu z klasycznymi regulatorami całkowitego rzędu. W trakcie eksperymentów, podczas modulacji rzędu regulatorów, nie zmieniano nastaw samych regulatorów, co pozwoliło na zachowanie spójności parametrów i umożliwiło bezpośrednie porównanie charakterystyk dynamicznych całego układu. W ten sposób badano, jak zmiana rzędu regulatorów wpływa na stabilność i dokładność śledzenia zadanej nieliniowej trajektorii w układzie regulacji. 
+
+\subsection{Charakterystyki częstotliwościowe regulatorów}
+
+Zadanie sinusoidalnie zmieniającego się położenia kątowego, dla każdego ze stawów prowadzi do realizacji nieliniowej trajektorii. Amplituda sinusoidy wynosząca 10 stopni rozszerza zakres badanych częstotliwości, umożliwiając analizę systemu w szerszym zakresie dynamiki. Stosunek otrzymanej do zadanej amplitudy zmiany położenia kątowego dla pięciu znaczących ramion i różnych rzędów całkowania w stanie ustalonym, pod względem częstotliwości zestawiają Tabele \ref{tab:lam1}.
+W miejscach, gdzie zamiast wyników pojawiają się myślniki, oznacza to, że dany człon układu nie był stabilny, nie osiągał wymaganej wartości zadanej lub z powodu specyfiki jego działania występowała składowa zerowa. Ta składowa uniemożliwiała poprawne odwzorowanie sygnału zadanego, co mogło prowadzić do braku pełnej realizacji oczekiwanego przebiegu. W Tabeli \ref{tab:lam1}, przy częstotliwości 4 Hz, odczytanie wartości amplitudy nie jest możliwe ze względu na występowanie znaczącej składowej zerowej, która uniemożliwia odtworzenie wartości zadanej. 
+\begin{table}[h]
+	\centering
+	\caption{Charakterystyka częstotliwościowa dla $\lambda$ = 1}
+	\label{tab:lam1} % Dodanie etykiety
+	\begin{tabular}{|c|c|c|c|c|c|}
+		\hline
+		$f_z$ & $\frac{I_{0}}{I_z}$ & $\frac{I_{1}}{I_z}$ & $\frac{I_{2}}{I_z}$ & $\frac{I_{3}}{I_z}$ & $\frac{I_{4}}{I_z}$ \\
+		\hline
+		Hz & - & - & - & - & - \\
+		\hline
+		$\frac{1}{50}$ & 1 & 0.96 & 1 & 1 & 1 \\
+		\hline
+		$\frac{1}{40}$ & 1 & 0.96 & 1 & 1 & 1 \\
+		\hline
+		$\frac{1}{30}$ & 1 & 0.96 & 0.95 & 1 & 0.95 \\
+		\hline
+		$\frac{1}{20}$ & 1 & 0.96 & 0.92 & 1 & 0.94 \\
+		\hline
+		$\frac{1}{10}$ & 1 & 0.96 & 0.92 & 1 & 0.94 \\
+		\hline
+		$\frac{1}{5}$ & 1 & 0.97 & 0.92 & 0.96 & 0.96 \\
+		\hline
+		$\frac{1}{4}$ & 0.98 & 0.97 & 0.94 & 0.94 & 0.97 \\
+		\hline
+		$\frac{1}{3}$ & 0.95 & 0.97 & 0.95 & 0.94 & 0.98 \\
+		\hline
+		$\frac{1}{2}$ & 0.86 & 0.97 & 0.96 & 0.91 & 1.02 \\
+		\hline
+		1 & 0.76 & 0.97 & 0.90 & 0.87 & 0.92 \\
+		\hline
+		2 & 0.76 & 0.97 & 0.74 & 0.78 & 0.60 \\
+		\hline
+		3 & 0.72 & 0.94 & 0.67 & - & 0.40 \\
+		\hline
+		4 & - & - & - & - & - \\
+		\hline
+	\end{tabular}
+\end{table}
+Badanie dla $\lambda$ = 0.5 ogranicza się do jeszcze mniejszych częstotliwości sygnałów zadanych; Tabela \ref{tab:lam05}. Zmniejszenie rzędu całkowania dodatkowo ogranicza możliwości odtworzenia sygnału zadanego przez układ. Ograniczenie rzędu całkowania w pętli regulacji prędkości kątowej zmniejsza możliwość do odtworzenia momentu zadanego na wyjściu regulatora, w wyniku czego zwiększa się błąd składowej stałej i zmniejsza stabilność układu dla większych częstotliwości.  
+\begin{table}[h]
+	\centering
+	\caption{Charakterystyka częstotliwościowa dla $\lambda$ = 0.5}
+	\label{tab:lam05} % Dodanie etykiety
+	\begin{tabular}{|c|c|c|c|c|c|}
+		\hline
+		$f_z$ & $\frac{I_{0}}{I_z}$ & $\frac{I_{1}}{I_z}$ & $\frac{I_{2}}{I_z}$ & $\frac{I_{3}}{I_z}$ & $\frac{I_{4}}{I_z}$ \\
+		\hline
+		Hz & - & - & - & - & - \\
+		\hline
+		$\frac{1}{50}$ & 1 & 0.96 & 0.95 & 1 & 1 \\
+		\hline
+		$\frac{1}{40}$ & 1 & 0.96 & 0.97 & 1 & 0.95 \\
+		\hline
+		$\frac{1}{30}$ & 1 & 0.96 & 0.97 & 1 & 0.95 \\
+		\hline
+		$\frac{1}{20}$ & 1 & 0.96 & 0.97 & 1 & 0.94 \\
+		\hline
+		$\frac{1}{10}$ & 1.1 & 0.96 & 0.97 & 1 & 0.94 \\
+		\hline
+		$\frac{1}{5}$ & 1 & 0.97 & 0.93 & 0.96 & 0.96 \\
+		\hline
+		$\frac{1}{4}$ & 0.98 & 0.97 & 0.94 & 0.95 & 0.98 \\
+		\hline
+		$\frac{1}{3}$ & 0.95 & 0.98 & 0.95 & 0.94 &1 \\
+		\hline
+		$\frac{1}{2}$ & 0.86 & 0.97 & 0.96 & 0.92 & 1.02 \\
+		\hline
+		1 & 			0.76 & 0.97 & 0.90 & - & - \\
+		\hline
+		2 & 			- 	 & -    & - & - & - \\
+		\hline
+		3 & 			-	 & -    & - & - & - \\
+		\hline
+		4 & - & - & - & - & - \\
+		\hline
+	\end{tabular}
+\end{table}
+Tabela \ref{tab:lam15} zestawia dane dotyczące badania odtwarzania sinusoidalnego sygnału zadanego, dla $\lambda$ = 1.5. Ogólnie, częstotliwości powyżej 1 Hz są silnie tłumione przez układ; dynamika jest ciężka i układ nie nadąża za szybkimi zmianami. Dodatkowo podczas szybkich zmian sygnał wyjściowy podlega nieliniowym deformacjom. Następne wyniki przedstawią analizę składowych harmonicznych sygnałów wyjściowych.
+\begin{table}[h]
+	\centering
+	\caption{Charakterystyka częstotliwościowa dla $\lambda$ = 1.5}
+	\label{tab:lam15} % Dodanie etykiety
+	\begin{tabular}{|c|c|c|c|c|c|}
+		\hline
+		$f_z$ & $\frac{I_{0}}{I_z}$ & $\frac{I_{1}}{I_z}$ & $\frac{I_{2}}{I_z}$ & $\frac{I_{3}}{I_z}$ & $\frac{I_{4}}{I_z}$ \\
+		\hline
+		Hz & - & - & - & - & - \\
+		\hline
+		$\frac{1}{50}$ & 1 & 0.97 & 0.97 & 0.98 & 0.95 \\
+		\hline
+		$\frac{1}{40}$ & 1 & 0.97 & 0.96 & 0.98 & 0.94 \\
+		\hline
+		$\frac{1}{30}$ & 1 & 0.97 & 0.94 & 0.98 & 0.94 \\
+		\hline
+		$\frac{1}{20}$ & 1 & 0.97 & 0.92 & 0.97 & 0.93 \\
+		\hline
+		$\frac{1}{10}$ & 1 & 0.97 & 0.90 & 0.97 & 0.83 \\
+		\hline
+		$\frac{1}{5}$ & 1 & 0.97 & 0.92 & 0.95 & 0.90 \\
+		\hline
+		$\frac{1}{4}$ & 1 & 0.97 & 0.94 & 0.95 & 1 \\
+		\hline
+		$\frac{1}{3}$ & 0.95 & 0.97 & 0.95 & 0.94 &1 \\
+		\hline
+		$\frac{1}{2}$ & 0.86 & 0.97 & 0.95 & 0.94 & 1.2 \\
+		\hline
+		1 & 			0.76 & 0.97 & 0.89 & 0.88 & 0.96 \\
+		\hline
+		2 & 			0.78 & 0.97 & 0.75 & - & - \\
+		\hline
+		3 & 			-	 & -    & - & - & - \\
+		\hline
+		4 & - & - & - & - & - \\
+		\hline
+	\end{tabular}
+\end{table}
+
+\subsection{Analiza składowych harmonicznych}
+
+\section{Bibliografia}
+\begin{thebibliography}{00}
+	\bibitem{matlab} Matlab - dokumentacja [Online]. Dostęp (22.11.2024 r.):
+	\href{https://www.mathworks.com/help/matlab/}{https://www.mathworks.com/help/matlab/}
+	
+	\bibitem{simulink} Simulink - dokumentacja [Online]. Dostęp (22.11.2024 r.): \href{https://www.mathworks.com/help/simulink/}{https://www.mathworks.com/help/simulink/}
+	
+	\bibitem{Robotics Toolbox} Robotics Toolbox - dokumentacja [Online]. Dostęp (22.11.2024 r.):
+	\href{https://www.mathworks.com/help/robotics/}{https://www.mathworks.com/help/robotics/}
+	
+	\bibitem{Simscape} Simscape - dokumentacja [Online]. Dostęp (22.11.2024 r.):
+	\href{https://www.mathworks.com/help/robotics/}{https://www.mathworks.com/help/robotics/}
+	
+	\bibitem{FOMCON} A. Tepljakov, E. Petelnikov, and J. Belikov, "A flexible MATLAB tool for optimal fractional-order PID controller design subject to specifications," *Proc. 31st Chinese Control Conf.*, Hefei, China, Jul. 2012, pp. 4876–4881. [Online]. Dostęp (22.11.2024 r.): \href{https://www.researchgate.net/publication/259741861_A_Flexible_MATLAB_Tool_for_Optimal_Fractional-order_PID_Controller_Design_Subject_to_Specifications}{https://www.researchgate.net/publication/259741861}
+	
+	\bibitem{FOMCONdoc} FOMCON - dokumentacja [Online]. Dostęp (22.11.2024 r.):
+	\href{https://fomcon.net/}{https://fomcon.net/}
+	
+	\bibitem{Hamachi} Hamachi - strona [Online]. Dostęp (22.11.2024 r.):
+	\href{https://www.vpn.net/}{https://www.vpn.net/}
+	
+	\bibitem{Haguichi} Haguichi - instrukcja pobrania [Online]. Dostęp (22.11.2024 r.):
+	\href{https://haguichi.net/download/}{https://haguichi.net/download/}
+	
+	\bibitem{ROS2} ROS2 foxy - dokumentacja [Online]. Dostęp (22.11.2024 r.):
+	\href{https://docs.ros.org/en/foxy/index.html}{https://docs.ros.org/en/foxy/index.html}
+	
+	\bibitem{ROS Toolbox} ROS Toolbox - dokumentacja [Online]. Dostęp (22.11.2024 r.):
+	\href{https://www.mathworks.com/help/ros/}{https://www.mathworks.com/help/ros/}
+	
+	\bibitem{Fractional}K. Rogowski, T. Kaczorek, "Fractional Linear Systems and Electrical Circuits",Studies in Systems, Decision and Control, Springer, NY, 2015
+	
+	\bibitem{Selected}T. Kaczorek, "Selected Problems of Fractional Systems Theory",Lecture Notes in Control and Information Sciences 411,  2011 Springer-Verlag Berlin Heidelberg
+	
+	\bibitem{Pawlusz}E. Pawłuszewicz, A. Koszewnik, P. Burzyński, "ON GRÜNWLAD-LETINKOV FRACTIONAL OPERATOR WITH MEASURABLE ORDER ON CONTINUOUS-DISCRETE TIME SCALE", acta mechanica et automatica, vol.14 no.3 (2020)
+	
+	\bibitem{Popolizio}M. Popolizio, "On the Matrix Mittag–Leffler Function: Theoretical Properties and Numerical Computation", Mathematics, 2019
+	
+	\bibitem{Kumar}Pushpendra Kumar, Dumitru Baleanu, Vedat Suat Erturk, Mustafa Inc and V. Govindaraj, "A delayed plant disease model with Caputo fractional derivatives", Advances in Continuous and Discrete Models, Springer, 2022
+	
+	\bibitem{falling}Mustafa Turkyilmazoglu, Mohamed Altanji, "Fractional models of falling object with linear and quadratic frictional forces considering Caputo derivative",Chaos, Solitons and Fractals, Elsevier, 2023
+	
+	\bibitem{plant}Muhammad Farman, Rabia Sarwar, Ali Akgul, "Modeling and analysis of sustainable approach for dynamics of infections in plant virus with fractal fractional operator", Chaos, Solitons and Fractals, Elsevier, 2023
+	
+	\bibitem{power}Georgios Tzounas, Ioannis Dassios,Mohammed Ahsan Adib Murad, and Federico Milano, "Theory and Implementation of Fractional Order Controllers for Power System Applications", IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 35, NO. 6, NOVEMBER 2020
+\end{thebibliography}
+
+
+
+\end{document}
