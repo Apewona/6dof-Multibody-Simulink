@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.26 (MiKTeX 24.4) (preloaded format=pdflatex 2024.7.11)  6 DEC 2024 09:20
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (MiKTeX 24.4) (preloaded format=pdflatex 2024.7.11)  23 DEC 2024 14:43
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -508,8 +508,6 @@ LaTeX Font Info:    Trying to load font information for T1+phv on input line 33
 (D:\MikTex\tex/latex/psnfss\t1phv.fd
 File: t1phv.fd 2020/03/25 scalable font definitions for T1/phv.
 )
-LaTeX Font Info:    Font shape `T1/phv/m/it' in size <11> not available
-(Font)              Font shape `T1/phv/m/sl' tried instead on input line 33.
 Package color Info: Redefining color nblue on input line 33.
 Package color Info: Redefining color mblue on input line 33.
 
@@ -692,47 +690,47 @@ Package pdftex.def Info: ../figs/5.png  used on input line 415.
 [8
 
  <../figs/5.png>]
-Underfull \hbox (badness 10000) in paragraph at lines 423--425
+Underfull \hbox (badness 10000) in paragraph at lines 424--426
 []\T1/ptm/m/n/8 Matlab - do-ku-men-ta-cja [On-line]. Do-st如 (22.11.2024 r.):
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 426--427
+Underfull \hbox (badness 10000) in paragraph at lines 427--428
 []\T1/ptm/m/n/8 Simulink - do-ku-men-ta-cja [On-line]. Do-st如 (22.11.2024 r.):
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 431--433
+Underfull \hbox (badness 10000) in paragraph at lines 432--434
 []\T1/ptm/m/n/8 Simscape - do-ku-men-ta-cja [On-line]. Do-st如 (22.11.2024 r.):
 
  []
 
 
-Underfull \hbox (badness 2951) in paragraph at lines 434--435
+Underfull \hbox (badness 2951) in paragraph at lines 435--436
 []\T1/ptm/m/n/8 A. Te-pl-ja-kov, E. Pe-tel-ni-kov, and J. Be-li-kov, "A fle-xi-
 ble MA-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 436--438
+Underfull \hbox (badness 10000) in paragraph at lines 437--439
 []\T1/ptm/m/n/8 FOMCON - do-ku-men-ta-cja [On-line]. Do-st如 (22.11.2024 r.):
  []
 
 
-Underfull \hbox (badness 2050) in paragraph at lines 442--444
+Underfull \hbox (badness 2050) in paragraph at lines 443--445
 []\T1/ptm/m/n/8 Haguichi - in-struk-cja po-bra-nia [On-line]. Do-st如 (22.11.20
 24 r.):
  []
 
 
-Underfull \hbox (badness 6094) in paragraph at lines 445--447
+Underfull \hbox (badness 6094) in paragraph at lines 446--448
 []\T1/ptm/m/n/8 ROS2 foxy - do-ku-men-ta-cja [On-line]. Do-st如 (22.11.2024 r.)
 :
  []
 
 
-Underfull \hbox (badness 2717) in paragraph at lines 448--450
+Underfull \hbox (badness 2717) in paragraph at lines 449--451
 []\T1/ptm/m/n/8 ROS To-ol-box - do-ku-men-ta-cja [On-line]. Do-st如 (22.11.2024
  r.):
  []
@@ -753,11 +751,11 @@ Package rerunfilecheck Info: File `main.out' has not changed.
 (rerunfilecheck)             Checksum: E1C09EBAD1A0A0C6F7628C69742C283B;2149.
  ) 
 Here is how much of TeX's memory you used:
- 12745 strings out of 473904
- 194100 string characters out of 5743015
+ 12742 strings out of 473904
+ 194066 string characters out of 5743015
  1995908 words of memory out of 5000000
- 35338 multiletter control sequences out of 15000+600000
- 693818 words of font info for 171 fonts, out of 8000000 for 9000
+ 35336 multiletter control sequences out of 15000+600000
+ 690865 words of font info for 169 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  75i,19n,79p,1630b,464s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <D:/MikTex/fonts/type1/public/amsfonts/cm/cmbx6.pfb><D:/MikTex/fonts/type1/pu
@@ -772,7 +770,7 @@ blic/amsfonts/cm/cmsy10.pfb><D:/MikTex/fonts/type1/public/amsfonts/cm/cmsy7.pfb
 tic/uhvr8a.pfb><D:/MikTex/fonts/type1/urw/helvetic/uhvro8a.pfb><D:/MikTex/fonts
 /type1/urw/times/utmb8a.pfb><D:/MikTex/fonts/type1/urw/times/utmr8a.pfb><D:/Mik
 Tex/fonts/type1/urw/times/utmri8a.pfb>
-Output written on main.pdf (9 pages, 929934 bytes).
+Output written on main.pdf (9 pages, 929803 bytes).
 PDF statistics:
  319 PDF objects out of 1000 (max. 8388607)
  65 named destinations out of 1000 (max. 500000)
